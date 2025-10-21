@@ -1,0 +1,5 @@
+{
+  "name": "Trợ Lý Build Đồ Quỷ Cốc Bát Hoang",
+  "description": "Một ứng dụng sử dụng AI để tạo ra các gợi ý build nhân vật cho game Quỷ Cốc Bát Hoang (Tale of Immortal). Chọn con đường tu luyện và phong cách chơi của bạn để nhận được hướng dẫn chi tiết.",
+  "requestFramePermissions": []
+}

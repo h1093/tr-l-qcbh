@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trợ Lý Build Đồ Quỷ Cốc Bát Hoang</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              'brand-bg': '#121212',
+              'brand-surface': '#1e1e1e',
+              'brand-primary': '#a855f7',
+              'brand-secondary': '#f472b6',
+              'brand-text': '#e5e7eb',
+              'brand-text-secondary': '#9ca3af',
+            },
+            boxShadow: {
+              'glow-primary': '0 0 15px rgba(168, 85, 247, 0.5)',
+              'glow-secondary': '0 0 15px rgba(244, 114, 182, 0.5)',
+            },
+            keyframes: {
+              'fade-in-up': {
+                '0%': { opacity: '0', transform: 'translateY(1rem)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              },
+               'fade-in': {
+                '0%': { opacity: '0'},
+                '100%': { opacity: '1'},
+              }
+            },
+            animation: {
+              'fade-in-up': 'fade-in-up 0.5s ease-out forwards',
+              'fade-in': 'fade-in 0.3s ease-out forwards',
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module">
+      import React from "https://esm.sh/react@18.2.0";
+      import ReactDOM from "https://esm.sh/react-dom@18.2.0/client";
+      import ReactMarkdown from "https://esm.sh/react-markdown@8.0.7";
+      import remarkGfm from "https://esm.sh/remark-gfm@3.0.1";
+      window.React = React;
+      window.ReactDOM = ReactDOM;
+      window.ReactMarkdown = ReactMarkdown;
+      window.remarkGfm = remarkGfm;
+    </script>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.25.0"
+  }
+}
+</script>
+</head>
+  <body class="bg-brand-bg text-brand-text">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
