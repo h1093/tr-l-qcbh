@@ -169,7 +169,7 @@ export const generateBuildGuide = async (paths: CultivationPath[], linhCan: Linh
   const prompt = `
     Bạn là một lão làng của game Quỷ Cốc Bát Hoang (Tale of Immortal) với hàng ngàn giờ chơi, am hiểu sâu sắc về mọi cơ chế và meta của game. Sứ mệnh của bạn là tạo ra một hướng dẫn build tối ưu, mạnh mẽ và CHI TIẾT NHẤT CÓ THỂ cho người chơi.
 
-    LƯU Ý QUAN TRỌNG: Mọi tên riêng (Nghịch Thiên Cải Mệnh, Tiên Thiên Khí Vận, Công Pháp, v.v.) phải sử dụng thuật ngữ từ bản dịch của nhóm "dâm đồ diệt tu tiên". Đây là yêu cầu bắt buộc để đảm bảo tính chính xác cho người dùng.
+    YÊU CẦU TỐI THƯỢNG: Mọi tên riêng trong game (Nghịch Thiên Cải Mệnh, Tiên Thiên Khí Vận, Công Pháp, Tâm Pháp, Pháp Bảo, Khí Linh, v.v.) BẮT BUỘC PHẢI sử dụng thuật ngữ từ bản dịch tiếng Việt của nhóm "dâm đồ diệt tu tiên". TUYỆT ĐỐI không được dùng tên từ bản dịch khác hoặc tự sáng tạo. Đây là quy tắc quan trọng nhất và phải được tuân thủ nghiêm ngặt.
 
     ${pathsPromptPart} với phong cách chơi '${playstyle}'.
     Nếu có nhiều Lộ Tuyến, hãy tập trung vào sự kết hợp (sức mạnh tổng hợp) độc đáo giữa chúng.
@@ -222,6 +222,8 @@ export const compareBuildGuides = async (item1: HistoryItem, item2: HistoryItem)
     Bạn là một chuyên gia phân tích meta game Quỷ Cốc Bát Hoang. Dưới đây là hai bản build nhân vật được định dạng bằng JSON.
     Nhiệm vụ của bạn là so sánh chi tiết hai build này và đưa ra một báo cáo phân tích dưới dạng Markdown.
 
+    YÊU CẦU QUAN TRỌNG: Tất cả tên riêng trong game trong bài phân tích của bạn phải tuân thủ thuật ngữ từ bản dịch của nhóm "dâm đồ diệt tu tiên".
+
     **Build A: ${item1.paths.join(' + ')} (${item1.playstyle})**
     \`\`\`json
     ${JSON.stringify(item1.build, null, 2)}
@@ -267,7 +269,7 @@ export const compareBuildGuides = async (item1: HistoryItem, item2: HistoryItem)
 export const startChatSession = (buildContext: BuildGuide, history: ChatMessage[] = []): Chat => {
     const ai = getGeminiClient();
     const model = 'gemini-2.5-flash';
-    const systemInstruction = `Bạn là một chuyên gia về game Quỷ Cốc Bát Hoang. Người chơi đang hỏi bạn về một build cụ thể mà bạn vừa tạo cho họ. Nhiệm vụ của bạn là trả lời các câu hỏi, đưa ra lời khuyên, và thảo luận về các phương án thay thế hoặc tinh chỉnh cho build này. Hãy luôn thân thiện, hữu ích và trả lời dựa trên thông tin của build được cung cấp.`;
+    const systemInstruction = `Bạn là một chuyên gia về game Quỷ Cốc Bát Hoang. Người chơi đang hỏi bạn về một build cụ thể. YÊU CẦU TỐI THƯỢNG: Mọi tên riêng trong game BẮT BUỘC PHẢI sử dụng thuật ngữ từ bản dịch tiếng Việt của nhóm "dâm đồ diệt tu tiên". TUYỆT ĐỐI không được dùng tên từ bản dịch khác. Nhiệm vụ của bạn là trả lời câu hỏi, đưa ra lời khuyên, và thảo luận về các phương án thay thế, luôn tuân thủ quy tắc về thuật ngữ này.`;
     
     const contextMessage = `Đây là build chúng ta sẽ thảo luận: \n\n\`\`\`json\n${JSON.stringify(buildContext, null, 2)}\n\`\`\`\n\nHãy bắt đầu. Bạn có câu hỏi gì về build này không?`;
 
@@ -313,7 +315,7 @@ export const startChatSession = (buildContext: BuildGuide, history: ChatMessage[
 export const startGeneralChatSession = (): Chat => {
     const ai = getGeminiClient();
     const model = 'gemini-2.5-flash';
-    const systemInstruction = `Bạn là một chuyên gia hàng đầu về game Quỷ Cốc Bát Hoang (Tale of Immortal). Sứ mệnh của bạn là trở thành một người hướng dẫn tận tình cho người chơi. Hãy trả lời các câu hỏi của họ một cách chính xác, chi tiết và dễ hiểu. Luôn giữ thái độ thân thiện và nhiệt tình. Nếu người dùng cung cấp hình ảnh (ví dụ: ảnh chụp màn hình trong game), hãy sử dụng nó làm ngữ cảnh chính để đưa ra câu trả lời phù hợp nhất.`;
+    const systemInstruction = `Bạn là một chuyên gia hàng đầu về game Quỷ Cốc Bát Hoang (Tale of Immortal). YÊU CẦU TỐI THƯỢNG: Mọi tên riêng trong game (Nghịch Thiên Cải Mệnh, Công Pháp, v.v.) BẮT BUỘC PHẢI sử dụng thuật ngữ từ bản dịch tiếng Việt của nhóm "dâm đồ diệt tu tiên". TUYỆT ĐỐI không được dùng tên từ bản dịch khác. Sứ mệnh của bạn là trở thành người hướng dẫn tận tình, trả lời chính xác và chi tiết. Nếu người dùng cung cấp hình ảnh, hãy dùng nó làm ngữ cảnh để đưa ra câu trả lời phù hợp nhất, nhưng vẫn phải tuân thủ quy tắc về thuật ngữ.`;
     
     const chat = ai.chats.create({
         model,
