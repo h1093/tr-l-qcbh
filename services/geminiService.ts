@@ -1,7 +1,24 @@
 import { GoogleGenAI, Type, Chat, Part } from "@google/genai";
 import { CultivationPath, BuildGuide, LinhCan, TinhAnh, HistoryItem, ChatMessage } from '../types';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+export const API_KEY_STORAGE_KEY = 'GEMINI_API_KEY';
+
+const getGeminiClient = (): GoogleGenAI => {
+  const storedKey = typeof window !== 'undefined' ? window.localStorage.getItem(API_KEY_STORAGE_KEY) : null;
+  const apiKey = storedKey || process.env.API_KEY;
+
+  if (!apiKey) {
+    throw new Error("API Key not found. Please provide one in the settings.");
+  }
+
+  return new GoogleGenAI({ apiKey });
+};
+
+export const hasApiKey = (): boolean => {
+    const storedKey = typeof window !== 'undefined' ? window.localStorage.getItem(API_KEY_STORAGE_KEY) : null;
+    const envKey = process.env.API_KEY;
+    return !!storedKey || !!envKey;
+}
 
 const gioiThieuSchema = {
     type: Type.OBJECT,
@@ -167,6 +184,7 @@ export const generateBuildGuide = async (paths: CultivationPath[], linhCan: Linh
   `;
 
   try {
+    const ai = getGeminiClient();
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: prompt,
@@ -182,6 +200,9 @@ export const generateBuildGuide = async (paths: CultivationPath[], linhCan: Linh
 
   } catch (error) {
     console.error("Lỗi khi gọi Gemini API hoặc phân tích JSON:", error);
+    if (error instanceof Error && error.message.includes("API key not valid")) {
+        throw new Error("API key not valid. Please check your API key.");
+    }
     throw new Error("Không thể tạo hướng dẫn build từ Gemini API.");
   }
 };
@@ -221,6 +242,7 @@ export const compareBuildGuides = async (item1: HistoryItem, item2: HistoryItem)
     `;
 
     try {
+        const ai = getGeminiClient();
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-pro', // Using a more powerful model for deeper analysis
             contents: prompt,
@@ -233,6 +255,7 @@ export const compareBuildGuides = async (item1: HistoryItem, item2: HistoryItem)
 };
 
 export const startChatSession = (buildContext: BuildGuide, history: ChatMessage[] = []): Chat => {
+    const ai = getGeminiClient();
     const model = 'gemini-2.5-flash';
     const systemInstruction = `Bạn là một chuyên gia về game Quỷ Cốc Bát Hoang. Người chơi đang hỏi bạn về một build cụ thể mà bạn vừa tạo cho họ. Nhiệm vụ của bạn là trả lời các câu hỏi, đưa ra lời khuyên, và thảo luận về các phương án thay thế hoặc tinh chỉnh cho build này. Hãy luôn thân thiện, hữu ích và trả lời dựa trên thông tin của build được cung cấp.`;
     
@@ -278,6 +301,7 @@ export const startChatSession = (buildContext: BuildGuide, history: ChatMessage[
 };
 
 export const startGeneralChatSession = (): Chat => {
+    const ai = getGeminiClient();
     const model = 'gemini-2.5-flash';
     const systemInstruction = `Bạn là một chuyên gia hàng đầu về game Quỷ Cốc Bát Hoang (Tale of Immortal). Sứ mệnh của bạn là trở thành một người hướng dẫn tận tình cho người chơi. Hãy trả lời các câu hỏi của họ một cách chính xác, chi tiết và dễ hiểu. Luôn giữ thái độ thân thiện và nhiệt tình. Nếu người dùng cung cấp hình ảnh (ví dụ: ảnh chụp màn hình trong game), hãy sử dụng nó làm ngữ cảnh chính để đưa ra câu trả lời phù hợp nhất.`;
     

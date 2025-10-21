@@ -10,6 +10,71 @@ import { HistoryPanel } from './components/HistoryPanel';
 import { ComparisonModal } from './components/ComparisonModal';
 import { ChatModal } from './components/ChatModal';
 import { GeneralChat } from './components/GeneralChat';
+import { API_KEY_STORAGE_KEY, hasApiKey } from './services/geminiService';
+
+
+const ApiKeyPrompt: React.FC<{ onKeySubmit: (key: string) => void }> = ({ onKeySubmit }) => {
+  const [key, setKey] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (key.trim()) {
+      onKeySubmit(key.trim());
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-brand-bg flex items-center justify-center p-4 animate-fade-in">
+      <div className="w-full max-w-md bg-brand-surface p-8 rounded-xl shadow-2xl border border-gray-700/50">
+        <div className="text-center">
+            <h1 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-secondary">
+              Yêu Cầu API Key
+            </h1>
+          <p className="mt-2 text-brand-text-secondary">
+            Vui lòng nhập API Key Gemini của bạn để bắt đầu.
+          </p>
+        </div>
+        
+        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+          <div>
+            <label htmlFor="apiKey" className="sr-only">Gemini API Key</label>
+            <input
+              id="apiKey"
+              type="password"
+              value={key}
+              onChange={(e) => setKey(e.target.value)}
+              className="w-full bg-gray-800/50 border border-gray-600 rounded-md px-4 py-3 text-brand-text placeholder-gray-500 focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition duration-200"
+              placeholder="Dán API Key của bạn vào đây"
+              required
+            />
+          </div>
+          <p className="text-xs text-center text-brand-text-secondary">
+            Key của bạn được lưu trữ an toàn trong trình duyệt và không được chia sẻ đi bất cứ đâu.
+          </p>
+          <div>
+            <button
+              type="submit"
+              className="w-full inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-brand-primary to-brand-secondary text-white font-semibold rounded-lg shadow-lg hover:shadow-glow-primary transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Lưu và Tiếp Tục
+            </button>
+          </div>
+        </form>
+         <div className="mt-6 text-center">
+            <a 
+              href="https://aistudio.google.com/app/apikey" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-sm text-brand-secondary hover:text-brand-primary underline transition-colors"
+            >
+              Lấy API Key từ Google AI Studio
+            </a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 
 const STORAGE_KEY = 'qcph_build_history';
 
@@ -64,6 +129,7 @@ const TabButton: React.FC<{ active: boolean; onClick: () => void; children: Reac
 
 
 const App: React.FC = () => {
+  const [isKeyAvailable, setIsKeyAvailable] = useState(hasApiKey());
   const [activeTab, setActiveTab] = useState<ActiveTab>('build');
   const [selectedPaths, setSelectedPaths] = useState<CultivationPath[]>([CULTIVATION_PATHS[0].value]);
   const [selectedLinhCan, setSelectedLinhCan] = useState<LinhCan>(LinhCan.None);
@@ -154,7 +220,15 @@ const App: React.FC = () => {
       });
 
     } catch (err) {
-      setError('Đã có lỗi xảy ra khi tạo build. Vui lòng thử lại.');
+      const errorMessage = err instanceof Error ? err.message : 'Đã có lỗi xảy ra khi tạo build. Vui lòng thử lại.';
+       if (errorMessage.includes("API key not valid")) {
+            setError('API Key không hợp lệ. Vui lòng kiểm tra lại.');
+            // Clear the invalid key to prompt for a new one
+            window.localStorage.removeItem(API_KEY_STORAGE_KEY);
+            setIsKeyAvailable(false);
+        } else {
+            setError(errorMessage);
+        }
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -326,6 +400,15 @@ const App: React.FC = () => {
       setBuildResult(null);
     }
   };
+
+  const handleKeySubmit = (key: string) => {
+    window.localStorage.setItem(API_KEY_STORAGE_KEY, key);
+    setIsKeyAvailable(true);
+  };
+
+  if (!isKeyAvailable) {
+    return <ApiKeyPrompt onKeySubmit={handleKeySubmit} />;
+  }
 
   return (
     <>
