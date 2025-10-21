@@ -108,6 +108,7 @@ export interface BuildGuide {
   phapBao: PhapBao[];
   khiLinh?: KhiLinh[];
   luuY: HuongDanNangCao | string; // Cho phép chuỗi để tương thích ngược
+  loiKhuyenNangCap?: string;
 }
 
 export interface ChatMessage {

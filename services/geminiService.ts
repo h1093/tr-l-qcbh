@@ -145,8 +145,12 @@ const buildGuideSchema = {
         items: khiLinhSchema
     },
     luuY: huongDanNangCaoSchema,
+    loiKhuyenNangCap: {
+        type: Type.STRING,
+        description: 'Đưa ra các lời khuyên cụ thể về việc nâng cấp trang bị, kỹ năng, hoặc chỉ số theo thứ tự ưu tiên. Gợi ý các mục tiêu ngắn hạn (ví dụ: tìm tâm pháp X, nâng cấp kỹ năng Y lên cấp Z) và dài hạn (ví dụ: hoàn thiện bộ pháp bảo Z). Phân tích dưới dạng gạch đầu dòng Markdown.'
+    },
   },
-  required: ['gioiThieu', 'tienThienKhiVan', 'nghichThienCaiMenh', 'congPhap', 'tamPhap', 'phapBao', 'khiLinh', 'luuY']
+  required: ['gioiThieu', 'tienThienKhiVan', 'nghichThienCaiMenh', 'congPhap', 'tamPhap', 'phapBao', 'khiLinh', 'luuY', 'loiKhuyenNangCap']
 };
 
 export const generateBuildGuide = async (paths: CultivationPath[], linhCan: LinhCan, tinhAnh: TinhAnh, playstyle: string): Promise<BuildGuide> => {
@@ -165,6 +169,8 @@ export const generateBuildGuide = async (paths: CultivationPath[], linhCan: Linh
   const prompt = `
     Bạn là một lão làng của game Quỷ Cốc Bát Hoang (Tale of Immortal) với hàng ngàn giờ chơi, am hiểu sâu sắc về mọi cơ chế và meta của game. Sứ mệnh của bạn là tạo ra một hướng dẫn build tối ưu, mạnh mẽ và CHI TIẾT NHẤT CÓ THỂ cho người chơi.
 
+    LƯU Ý QUAN TRỌNG: Mọi tên riêng (Nghịch Thiên Cải Mệnh, Tiên Thiên Khí Vận, Công Pháp, v.v.) phải sử dụng thuật ngữ từ bản dịch của nhóm "dâm đồ diệt tu tiên". Đây là yêu cầu bắt buộc để đảm bảo tính chính xác cho người dùng.
+
     ${pathsPromptPart} với phong cách chơi '${playstyle}'.
     Nếu có nhiều Lộ Tuyến, hãy tập trung vào sự kết hợp (sức mạnh tổng hợp) độc đáo giữa chúng.
     ${linhCanPromptPart}
@@ -181,6 +187,10 @@ export const generateBuildGuide = async (paths: CultivationPath[], linhCan: Linh
     - **phapBao:** Phân tích chi tiết từng pháp bảo, bao gồm 'ten', 'vaiTro' (vai trò), 'sucManhTongHop' (sức mạnh tổng hợp với build), 'kyNangDeXuat' (kỹ năng cần tìm), và 'tinhHuongSuDung' (khi nào nên dùng).
     - **khiLinh:** Gợi ý 1-2 Khí Linh phù hợp, phân tích sâu về sức mạnh tổng hợp, kỹ năng quan trọng và pháp bảo nên trang bị.
     - **luuY (Hướng Dẫn Nâng Cao):** Thay cho 'luuY' chung chung, hãy cung cấp một 'HuongDanNangCao' có cấu trúc. Điền đầy đủ 'uuTienNangCap' (thứ tự ưu tiên nâng cấp), 'chienLuocGiaoTranh' (cách đánh trong combat), 'ketHopVoiVatPham' (vật phẩm bổ trợ), và 'khacPhucNhuocDiem' (cách chơi để khắc phục điểm yếu).
+    - **loiKhuyenNangCap (Lời Khuyên Nâng Cấp):** Cung cấp một danh sách các lời khuyên cụ thể và actionable về lộ trình nâng cấp sức mạnh. Phân tích dưới dạng gạch đầu dòng, bao gồm:
+        - **Ưu tiên ngắn hạn:** Cần tập trung tìm kiếm, nâng cấp những gì ngay lập tức (ví dụ: tìm tâm pháp X, nâng cấp kỹ năng Y).
+        - **Mục tiêu trung hạn:** Các cột mốc sức mạnh tiếp theo (ví dụ: hoàn thiện bộ Nghịch Thiên Cải Mệnh, tìm pháp bảo Z).
+        - **Mục tiêu dài hạn:** Build hoàn chỉnh sẽ trông như thế nào, cần những gì để đạt được.
   `;
 
   try {
